@@ -11,11 +11,15 @@ The main tools used are pandas, numpy, IPython, Jupyter, and SciKit-Learn. A com
 ```pip install -r requirements.txt```
 
 
-Many people create separate python environments for all of their projects in order to keep depdencies separated. There is a great resource on how to do this [here](http://www.dabapps.com/blog/introduction-to-pip-and-virtualenv-python/)
+Many people create separate python environments for all of their projects in order to keep depdencies separated. There is a great resource on how to do this [here](http://www.dabapps.com/blog/introduction-to-pip-and-virtualenv-python/).
 
 ### Generating the dataset
 
-If you want to generate the dataset we used in our models (and you don't want to download the CSV file in our repo, download the full dataset [here](https://www.kaggle.com/c/reddit-comments-may-2015/data), and run ```create_data_subset.py``` This will put the data subset in the "data" folder.
+If you want to generate the dataset we used in our models (and you don't want to download the CSV file in our repo, download the full dataset [here](https://www.kaggle.com/c/reddit-comments-may-2015/data), and run
+
+```python createdataset.py```
+
+This will put the data subset in the "data" folder.
 
 The subset is comprised only of comments that belong to the following list of 10 subreddits: gadgets, sports, gaming, news, history, music, funny, movies, food, and book.
 
