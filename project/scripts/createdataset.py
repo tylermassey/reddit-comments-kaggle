@@ -7,7 +7,9 @@ db_filepath = "/Users/tylermassey/Desktop/database.sqlite"
 csv_filepath = "../data/subreddit_subset.csv"
 
 db_con = sqlite3.connect(db_filepath)
-reader = pd.read_sql("select * from May2015", con=db_con, chunksize=5000)
+reader = pd.read_sql("select * from May2015", con=db_con, chunksize=100000)
+
+firstChunk = True
 
 for chunk in reader:
 	gadgets 	= chunk['subreddit'] == "gadgets"
@@ -25,4 +27,8 @@ for chunk in reader:
 			news | history | music | funny | 
 			movies | food | books]
 
-	chunk.to_csv(path_or_buf=csv_filepath,mode="a",encoding='utf-8')
+	if firstChunk:
+		chunk.to_csv(path_or_buf=csv_filepath,mode="a",encoding='utf-8',header=True)
+		firstChunk = False;
+
+	chunk.to_csv(path_or_buf=csv_filepath,mode="a",encoding='utf-8',header=None)
