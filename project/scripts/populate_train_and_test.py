@@ -13,7 +13,7 @@ for chunk in reader:
 	print "Populating a training chunk"
 	train = chunk[is_test == False]
 	if firstChunk:
-		train.to_csv("train.csv", encoding="utf-8", mode="a", header=True)	
+		train.to_csv("../data/train.csv", encoding="utf-8", mode="a", header=True)	
 	train.to_csv("../data/train.csv", encoding="utf-8", mode="a", header=None)
 	print "train chunk contains", len(train), "rows\n"
 
