@@ -9,26 +9,30 @@ csv_filepath = "../data/subreddit_subset.csv"
 db_con = sqlite3.connect(db_filepath)
 reader = pd.read_sql("select * from May2015", con=db_con, chunksize=100000)
 
+
+def comment_under_post(row):
+    return row["parent_id"].startswith("t1")
+
+
 firstChunk = True
-
 for chunk in reader:
-	gadgets 	= chunk['subreddit'] == "gadgets"
-	sports		= chunk['subreddit'] == "sports"
-	gaming		= chunk['subreddit'] == "gaming"
-	news		= chunk['subreddit'] == "news"
-	history		= chunk['subreddit'] == "history"
-	music		= chunk['subreddit'] == "music"
-	funny		= chunk['subreddit'] == "funny"
-	movies		= chunk['subreddit'] == "movies"
-	food		= chunk['subreddit'] == "food"
-	books		= chunk['subreddit'] == "books"
-	
-	chunk = chunk[gadgets | sports | gaming |
-			news | history | music | funny | 
-			movies | food | books]
+    chunk = chunk[['body', 'parent_id', 'subreddit']]
 
-	if firstChunk:
-		chunk.to_csv(path_or_buf=csv_filepath,mode="a",encoding='utf-8',header=True)
-		firstChunk = False;
+    # this whole section needs to be optimized
+    chunk.replace('', np.nan, inplace=True)
+    chunk.dropna(inplace=True)
+    chunk['comment_under_post'] = chunk.apply(lambda row: comment_under_post(row), axis=1)
+    chunk['body'] = chunk['body'].str.replace('[^\w\s]', ' ')
+    chunk['body'] = chunk['body'].str.replace('\n', ' ')
+    chunk['body'] = chunk['body'].str.replace('\t', ' ')
+    chunk['body'] = chunk['body'].str.replace('\r', ' ')
 
-	chunk.to_csv(path_or_buf=csv_filepath,mode="a",encoding='utf-8',header=None)
+    chunk = chunk[chunk['subreddit'].isin(
+        ['gadgets', 'sports', 'gaming', 'news', 'history', 'music', 'funny', 'movies', 'food', 'books'])]
+
+    if firstChunk:
+        chunk.to_csv(path_or_buf=csv_filepath, sep=',', mode='a', index=False,
+                     header=['body', 'parent_id', 'subreddit', 'comment_under_post'])
+        firstChunk = False
+
+    chunk.to_csv(path_or_buf=csv_filepath, sep=',', mode='a', index=False, header=None)
