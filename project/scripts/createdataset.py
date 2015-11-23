@@ -87,9 +87,11 @@ html_parser = HTMLParser.HTMLParser()
 
 for chunk in reader:
     chunk = chunk[['body', 'parent_id', 'subreddit']]
-    chunk = chunk[chunk['subreddit'].isin(
-        ['gadgets', 'sports', 'gaming', 'news', 'history', 'Music', 'funny', 'movies', 'food', 'books'])]
+    #chunk = chunk[chunk['subreddit'].isin(
+    #    ['gadgets', 'sports', 'gaming', 'news', 'history', 'Music', 'funny', 'movies', 'food', 'books'])
 
+    chunk = chunk[chunk['subreddit'].isin(
+        ['CasualConversation', 'AdviceAnimals', 'leagueoflegends', 'news', 'nba', 'nfl', 'hockey', 'movies', 'todayilearned', 'relationships'])
     chunk['body'] = chunk['body'].apply(clean_string)
     chunk.dropna(inplace=True) 
     chunk['comment_under_post'] = chunk.apply(lambda row: comment_under_post(row), axis=1)
