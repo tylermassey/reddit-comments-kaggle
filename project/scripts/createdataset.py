@@ -88,12 +88,12 @@ html_parser = HTMLParser.HTMLParser()
 for chunk in reader:
     chunk = chunk[['body', 'parent_id', 'subreddit']]
     chunk = chunk[chunk['subreddit'].isin(
-        ['gadgets', 'sports', 'gaming', 'news', 'history', 'music', 'funny', 'movies', 'food', 'books'])]
+        ['gadgets', 'sports', 'gaming', 'news', 'history', 'Music', 'funny', 'movies', 'food', 'books'])]
 
     chunk['body'] = chunk['body'].apply(clean_string)
     chunk.dropna(inplace=True) 
-    chunk['subreddit_index']= chunk.apply(lambda row: get_index(row), axis = 1) 
     chunk['comment_under_post'] = chunk.apply(lambda row: comment_under_post(row), axis=1)
+    chunk['subreddit_index']= chunk.apply(lambda row: get_index(row), axis = 1) 
 
     if firstChunk:
         chunk.to_csv(path_or_buf=csv_filepath, sep=',', mode='a', index=False,
