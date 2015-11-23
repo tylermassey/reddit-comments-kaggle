@@ -74,8 +74,8 @@ def clean_string(s) :
     return s
 
 # Make sure to change this sqlite db path
-db_filepath = "/Users/lee/practice/big_data/data/database.sqlite"
-csv_filepath = "/Users/lee/practice/big_data/data/subreddit_subset.csv"
+db_filepath = "/Users/tylermassey/Desktop/database.sqlite"
+csv_filepath = "../data/subreddit_subset.csv"
 
 db_con = sqlite3.connect(db_filepath)
 
@@ -87,14 +87,13 @@ html_parser = HTMLParser.HTMLParser()
 
 for chunk in reader:
     chunk = chunk[['body', 'parent_id', 'subreddit']]
-    
+    chunk = chunk[chunk['subreddit'].isin(
+        ['gadgets', 'sports', 'gaming', 'news', 'history', 'music', 'funny', 'movies', 'food', 'books'])]
+
     chunk['body'] = chunk['body'].apply(clean_string)
     chunk.dropna(inplace=True) 
     chunk['subreddit_index']= chunk.apply(lambda row: get_index(row), axis = 1) 
     chunk['comment_under_post'] = chunk.apply(lambda row: comment_under_post(row), axis=1)
-
-    chunk = chunk[chunk['subreddit'].isin(
-        ['gadgets', 'sports', 'gaming', 'news', 'history', 'music', 'funny', 'movies', 'food', 'books'])]
 
     if firstChunk:
         chunk.to_csv(path_or_buf=csv_filepath, sep=',', mode='a', index=False,
