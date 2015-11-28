@@ -5,22 +5,23 @@ import re
 import HTMLParser
 from nltk.corpus import stopwords
 
-NO_APPOSTROPHE = { "youre" : "you are", "theyre" : "they are", "im" : "i am",
-        "hes" : "he is", "shes" : "she is", "its" : "it is", "aint" : "am not",
-        "arent" : "are not", "couldnt" : "could not", "doesnt" : "does not",
-        "hasnt" : "has not", "hadnt" : "had not" }
+NO_APPOSTROPHE = {"youre": "you are", "theyre": "they are", "im": "i am",
+                  "hes": "he is", "shes": "she is", "its": "it is", "aint": "am not",
+                  "arent": "are not", "couldnt": "could not", "doesnt": "does not",
+                  "hasnt": "has not", "hadnt": "had not"}
 
-APPOSTROPHE = { "s" : "is", "'re" : "are", "m" : "am", "ll" : "will",
-        "d" : "had", "ve" : "have"}
+APPOSTROPHE = {"s": "is", "'re": "are", "m": "am", "ll": "will",
+               "d": "had", "ve": "have"}
 
 subreddit_dict = {}
-i = 0 
+i = 0
 
-def get_index(row) :
-    if row['subreddit'] in subreddit_dict :
+
+def get_index(row):
+    if row['subreddit'] in subreddit_dict:
         return subreddit_dict[row['subreddit']]
-    else :
-        subreddit_dict[row['subreddit']] = i 
+    else:
+        subreddit_dict[row['subreddit']] = i
         global i
         i += 1
         return subreddit_dict[row['subreddit']]
@@ -29,13 +30,15 @@ def get_index(row) :
 def comment_under_post(row):
     return row["parent_id"].startswith("t1")
 
+
 def replace_two_or_more(s):
-    #look for 2 or more repetitions of character and replace with the character itself
+    # look for 2 or more repetitions of character and replace with the character itself
     pattern = re.compile(r"(.)\1{1,}", re.DOTALL)
     return pattern.sub(r"\1\1", s)
 
-def clean_string(s) :
-    if  s == "[deleted]":        
+
+def clean_string(s):
+    if s == "[deleted]":
         s = np.nan
         return s
 
@@ -52,7 +55,7 @@ def clean_string(s) :
     # list words with alphabets, numbers, and underscores
     s = re.split(r'\W+', s)
 
-    for i, word in enumerate(s) :
+    for i, word in enumerate(s):
 
         if word in NO_APPOSTROPHE:
             split_words = NO_APPOSTROPHE[word].split()
@@ -63,15 +66,16 @@ def clean_string(s) :
             s[i] = APPOSTROPHE[word]
 
     # removing stopwords from NLTK
-    s  = [word for word in s if word not in stopwords.words('english')]
+    s = [word for word in s if word not in stopwords.words('english')]
     # remove any empty element
     s = filter(None, s)
     # concatnate to a string
-    s  = ' '.join(s)
+    s = ' '.join(s)
     s.decode("utf8").encode('ascii', 'ignore')
     if s == '':
         s = np.nan
     return s
+
 
 # Make sure to change this sqlite db path
 db_filepath = "/Users/tylermassey/Desktop/database.sqlite"
@@ -84,16 +88,15 @@ reader = pd.read_sql("select * from May2015", con=db_con, chunksize=100000)
 firstChunk = True
 html_parser = HTMLParser.HTMLParser()
 
-
 for chunk in reader:
     chunk = chunk[['body', 'parent_id', 'subreddit']]
     #chunk = chunk[chunk['subreddit'].isin(
     #    ['gadgets', 'sports', 'gaming', 'news', 'history', 'Music', 'funny', 'movies', 'food', 'books'])
 
     chunk = chunk[chunk['subreddit'].isin(
-        ['CasualConversation', 'AdviceAnimals', 'leagueoflegends', 'news', 'nba', 'nfl', 'hockey', 'movies', 'todayilearned', 'relationships'])
+        ['CasualConversation', 'AdviceAnimals', 'leagueoflegends', 'news', 'nba', 'nfl', 'hockey', 'movies', 'todayilearned', 'relationships'])]
     chunk['body'] = chunk['body'].apply(clean_string)
-    chunk.dropna(inplace=True) 
+    chunk.dropna(inplace=True)
     chunk['comment_under_post'] = chunk.apply(lambda row: comment_under_post(row), axis=1)
     chunk['subreddit_index']= chunk.apply(lambda row: get_index(row), axis = 1) 
 
