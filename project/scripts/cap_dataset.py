@@ -17,8 +17,4 @@ for sr in subreddit_names:
     subsets.append(sdf)
 
 df = pd.concat(subsets)
-<<<<<<< d5f73d59042c4156e8db4b0017630a6b59e4bc38
 df.to_csv(capped_dataset_path, index=False)
-=======
-df.to_csv(capped_dataset_path, index = False)
->>>>>>> generate subreddit names from given dataset using pandas
