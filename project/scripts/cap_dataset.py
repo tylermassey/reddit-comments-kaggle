@@ -4,7 +4,7 @@ dataset_path = '../data/subreddit_newsubset.csv'
 df = pd.read_csv(dataset_path)
 subreddit_names = df.subreddit.unique()
 
-limit = 5000
+limit = 50000
 
 capped_dataset_path = '../data/cappedset_' + str(limit) + '.csv'
 subsets = list()
